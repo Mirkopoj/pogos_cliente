@@ -14,7 +14,7 @@ mod hmi;
 use crate::hmi::hmi;
 
 extern crate modulos_comunes;
-use modulos_comunes::{DataStruct, TcpMessage};
+use modulos_comunes::{DataStruct, TcpMessage, EMPTYTCPMESSAGE};
 
 mod procesamiento;
 use crate::procesamiento::proc;
@@ -113,7 +113,7 @@ async fn main() {
                 if msg != b"a" {
                     stream.write(msg).expect("Stream write failed");
                 }
-                let mut data: TcpMessage = Default::default();
+                let mut data: TcpMessage = EMPTYTCPMESSAGE;
                 match stream.read(&mut data) {
                     Ok(_) => {
                         println!("Llegó {}", from_utf8(&data).unwrap());
