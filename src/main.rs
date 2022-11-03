@@ -14,7 +14,7 @@ mod hmi;
 use crate::hmi::hmi;
 
 extern crate modulos_comunes;
-use modulos_comunes::DataStruct;
+use modulos_comunes::{DataStruct, TcpMessage};
 
 mod procesamiento;
 use crate::procesamiento::proc;
@@ -91,35 +91,49 @@ async fn main() {
             };
             loop {
                 let f_time = get_frame_time();
-                let msg = b"Hello!";
+                let params_new = proc(sensores, params, led_apagado, led_encendido, f_time);
+                let msg = match hmi(params_new) {
+                    'h' => {
+                        b"h"
+                    }
+                    'j' => {
+                        b"j"
+                    }
+                    'k' => {
+                        b"k"
+                    }
+                    'l' => {
+                        b"l"
+                    }
+                    _ => {
+                        b"a"
+                    }
+                };
                 stream.write(msg).expect("Stream write failed");
-                //println!("Sent Hello, awaiting reply...");
-                let mut data = [0 as u8; 50]; // using 6 byte buffer
+                let mut data: TcpMessage = Default::default();
                 match stream.read(&mut data) {
                     Ok(_) => {
                         println!("Llegó {}", from_utf8(&data).unwrap());
-                        //params.datos = from_utf8(&data).unwrap();
+                        match from_utf8(&data).unwrap() {
+                            "h" => {
+                                sensores.cinta ^= true; 
+                            }
+                            "j" => {
+                                sensores.pogos ^= true; 
+                            }
+                            "k" => {
+                                sensores.sensor ^= true;
+                            }
+                            "l" => {
+                                sensores.selector ^= true;
+                            }
+                            _ => {}
+                        }
                     }
                     Err(e) => {
                         println!("Failed to receive data: {}", e);
                     }
                 }
-                let params_new = proc(sensores, params, led_apagado, led_encendido, f_time);
-                match hmi(params_new) {
-                    'h' => {
-                        sensores.cinta ^= true; 
-                    }
-                    'j' => {
-                        sensores.pogos ^= true; 
-                    }
-                    'k' => {
-                        sensores.sensor ^= true;
-                    }
-                    'l' => {
-                        sensores.selector ^= true;
-                    }
-                    _ => {}
-                    }
                 let rest = (1./60.)-f_time;
                 thread::sleep(time::Duration::from_secs_f32(
                         if rest > 0.0 {
