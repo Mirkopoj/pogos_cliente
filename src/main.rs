@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use std::io::{Read, Write};
+use std::io::{Read, Write, ErrorKind};
 use std::net::TcpStream;
 use std::str::from_utf8;
 use std::{thread, time};
@@ -34,6 +34,7 @@ const SELECTOR_Y: f32 = 300.0;
 async fn main() {
     match TcpStream::connect("192.168.1.2:3333") {
         Ok(mut stream) => {
+            stream.set_nonblocking(true).expect("set_nonblocking failed");
             println!("Successfully connected to server in port 3333");
 
             let rueda = Texture2D::from_file_with_format(
@@ -109,7 +110,9 @@ async fn main() {
                         b"a"
                     }
                 };
-                stream.write(msg).expect("Stream write failed");
+                if msg != b"a" {
+                    stream.write(msg).expect("Stream write failed");
+                }
                 let mut data: TcpMessage = Default::default();
                 match stream.read(&mut data) {
                     Ok(_) => {
@@ -131,7 +134,9 @@ async fn main() {
                         }
                     }
                     Err(e) => {
-                        println!("Failed to receive data: {}", e);
+                        if e.kind() != ErrorKind::WouldBlock {
+                            println!("Failed to receive data: {}", e);
+                        }
                     }
                 }
                 let rest = (1./60.)-f_time;
