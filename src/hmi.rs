@@ -18,7 +18,7 @@ pub fn hmi(params: &mut [ParamsStruct; CANTIDAD_DE_IMAGENES]) -> char {
     for sprite in params{
         match sprite.gif {
             Some(_) => {
-                sprite.gif.as_ref().expect("No hay gif").draw_at(sprite.x,sprite.y);
+                sprite.gif.as_ref().expect("No hay gif").draw_at(sprite.x*escalado_x,sprite.y*escalado_y);
                 if sprite.animada { sprite.gif.as_mut().expect("No hay gif").tick(); }
             },
             None => {
@@ -28,9 +28,18 @@ pub fn hmi(params: &mut [ParamsStruct; CANTIDAD_DE_IMAGENES]) -> char {
                     rotation: sprite.rot,
                     flip_x: false,
                     flip_y: false,
-                    pivot: sprite.pivot,
+                    pivot: match sprite.pivot {
+                        Some(pivote) => {
+                            let ret = Vec2::new(
+                                pivote.x * escalado_x,
+                                pivote.y * escalado_y
+                            );
+                            Some(ret)
+                        },
+                        None => { None },
+                    },
                 };
-                draw_texture_ex(sprite.foto, sprite.x, sprite.y, WHITE, macroquad_params);
+                draw_texture_ex(sprite.foto, sprite.x*escalado_x, sprite.y*escalado_y, WHITE, macroquad_params);
             },
         }
     }

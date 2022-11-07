@@ -54,13 +54,25 @@ const TICK_DEST_Y: f32 = 196.0;
 
 #[macroquad::main("Pogos")]
 async fn main() {
-    match TcpStream::connect("127.0.0.1:3333") {
+    match TcpStream::connect("192.168.1.2:3333") {
         Ok(mut stream) => {
             stream.set_nonblocking(true).expect("set_nonblocking failed");
             println!("Successfully connected to server in port 3333");
 
-            let cinta0 = quad_gif::GifAnimation::load("../images/Transportadora.gif".to_string()).await;
-            let cinta1 = quad_gif::GifAnimation::load("../images/Transportadora.gif".to_string()).await;
+            let (cinta0,cinta1) = match screen_width() as u32 {
+                800 => {
+                    (
+                        quad_gif::GifAnimation::load("./images/TransportadoraChica.gif".to_string()).await,
+                        quad_gif::GifAnimation::load("./images/TransportadoraChica.gif".to_string()).await
+                    )
+                },
+                _ => {(
+                        quad_gif::GifAnimation::load("../images/Transportadora.gif".to_string()).await,
+                        quad_gif::GifAnimation::load("../images/Transportadora.gif".to_string()).await
+                    )
+                },
+            };
+
             let cama = Texture2D::from_file_with_format(
                 include_bytes!("../images/Cama.png"),
                 Some(ImageFormat::Png),
