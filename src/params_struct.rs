@@ -9,4 +9,6 @@ pub struct ParamsStruct {
     pub x: f32,
     pub y: f32,
     pub pivot: Option<Vec2>,
+    pub x_dest: f32,
+    pub y_dest: f32,
 }

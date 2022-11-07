@@ -22,18 +22,35 @@ const CANTIDAD_DE_IMAGENES: usize = 8;
 
 const CINTA_X: f32 = 10.0; 
 const CINTA_Y: f32 = 900.0; 
+const CINTA_DEST_X: f32 = 1053.0; 
+const CINTA_DEST_Y: f32 = 117.0; 
 const CINTA_DESP: f32 = 1070.0; 
+
 const CAMA_X: f32 = 800.0; 
 const CAMA_Y: f32 = 1000.0; 
+const CAMA_DEST_X: f32 = 200.0; 
+const CAMA_DEST_Y: f32 = 48.0; 
 const CAMA_DESP: f32 = 100.0; 
+
 const LED_X: f32 = 1000.0; 
 const LED_Y: f32 = 1100.0; 
+const LED_DEST_X: f32 = 48.0; 
+const LED_DEST_Y: f32 = 48.0; 
+
 const SELECTOR_X: f32 = 2150.0; 
 const SELECTOR_Y: f32 = 1000.0; 
+const SELECTOR_DEST_X: f32 = 200.0; 
+const SELECTOR_DEST_Y: f32 = 200.0; 
+
 const TACHO_X: f32 = 2150.0; 
 const TACHO_Y: f32 = 1200.0; 
+const TACHO_DEST_X: f32 = 200.0; 
+const TACHO_DEST_Y: f32 = 200.0; 
+
 const TICK_X: f32 = 2150.0; 
 const TICK_Y: f32 = 700.0; 
+const TICK_DEST_X: f32 = 200.0; 
+const TICK_DEST_Y: f32 = 196.0; 
 
 #[macroquad::main("Pogos")]
 async fn main() {
@@ -77,6 +94,8 @@ async fn main() {
                     x: CINTA_X,
                     y: CINTA_Y,
                     pivot: None,
+                    x_dest: CINTA_DEST_X,
+                    y_dest: CINTA_DEST_Y,
                 },
                 ParamsStruct {
                     foto: led_encendido,
@@ -86,6 +105,8 @@ async fn main() {
                     x: CINTA_X + CINTA_DESP,
                     y: CINTA_Y,
                     pivot: None,
+                    x_dest: CINTA_DEST_X,
+                    y_dest: CINTA_DEST_Y,
                 },
                 ParamsStruct {
                     foto: cama,
@@ -95,6 +116,8 @@ async fn main() {
                     x: CAMA_X,
                     y: CAMA_Y,
                     pivot: None,
+                    x_dest: CAMA_DEST_X,
+                    y_dest: CAMA_DEST_Y,
                 },
                 ParamsStruct {
                     foto: led_apagado,
@@ -104,6 +127,8 @@ async fn main() {
                     x: LED_X,
                     y: LED_Y,
                     pivot: None,
+                    x_dest: LED_DEST_X,
+                    y_dest: LED_DEST_Y,
                 },
                 ParamsStruct {
                     foto: led_apagado,
@@ -113,6 +138,8 @@ async fn main() {
                     x: LED_X + CINTA_DESP,
                     y: LED_Y,
                     pivot: None,
+                    x_dest: LED_DEST_X,
+                    y_dest: LED_DEST_Y,
                 },
                 ParamsStruct {
                     foto: selector,
@@ -122,6 +149,8 @@ async fn main() {
                     x: SELECTOR_X,
                     y: SELECTOR_Y,
                     pivot: Some(Vec2::new(2300.0,1050.0)),
+                    x_dest: SELECTOR_DEST_X,
+                    y_dest: SELECTOR_DEST_Y,
                 },
                 ParamsStruct {
                     foto: tacho,
@@ -131,6 +160,8 @@ async fn main() {
                     x: TACHO_X,
                     y: TACHO_Y,
                     pivot: None,
+                    x_dest: TACHO_DEST_X,
+                    y_dest: TACHO_DEST_Y,
                 },
                 ParamsStruct {
                     foto: tick,
@@ -140,6 +171,8 @@ async fn main() {
                     x: TICK_X,
                     y: TICK_Y,
                     pivot: None,
+                    x_dest: TICK_DEST_X,
+                    y_dest: TICK_DEST_Y,
                 },
             ];
 

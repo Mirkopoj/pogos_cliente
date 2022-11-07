@@ -9,6 +9,9 @@ use macroquad::input::KeyCode::L;
 use macroquad::prelude::*;
 
 pub fn hmi(params: &mut [ParamsStruct; CANTIDAD_DE_IMAGENES]) -> char {
+    let escalado_x: f32 = screen_width()/2560.0;
+    let escalado_y: f32 = screen_height()/1440.0;
+    
     let mut ret: char = 'a';
     clear_background(WHITE);
 
@@ -20,7 +23,7 @@ pub fn hmi(params: &mut [ParamsStruct; CANTIDAD_DE_IMAGENES]) -> char {
             },
             None => {
                 let macroquad_params: DrawTextureParams = DrawTextureParams {
-                    dest_size: None,
+                    dest_size: Some(Vec2::new(sprite.x_dest*escalado_x,sprite.y_dest*escalado_y)),
                     source: None,
                     rotation: sprite.rot,
                     flip_x: false,
