@@ -1,3 +1,4 @@
+use crate::CANTIDAD_DE_IMAGENES;
 use crate::params_struct::ParamsStruct;
 
 use macroquad::input::KeyCode::H;
@@ -7,16 +8,14 @@ use macroquad::input::KeyCode::L;
 
 use macroquad::prelude::*;
 
-pub fn hmi(params: &mut [ParamsStruct; 4]) -> char {
+pub fn hmi(params: &mut [ParamsStruct; CANTIDAD_DE_IMAGENES]) -> char {
     let mut ret: char = 'a';
     clear_background(WHITE);
-
-
 
     for sprite in params{
         match sprite.gif {
             Some(_) => {
-                sprite.gif.as_ref().expect("No hay gif").draw();
+                sprite.gif.as_ref().expect("No hay gif").draw_at(sprite.x,sprite.y);
                 if sprite.animada { sprite.gif.as_mut().expect("No hay gif").tick(); }
             },
             None => {
@@ -26,7 +25,7 @@ pub fn hmi(params: &mut [ParamsStruct; 4]) -> char {
                     rotation: sprite.rot,
                     flip_x: false,
                     flip_y: false,
-                    pivot: None,
+                    pivot: sprite.pivot,
                 };
                 draw_texture_ex(sprite.foto, sprite.x, sprite.y, WHITE, macroquad_params);
             },

@@ -8,4 +8,5 @@ pub struct ParamsStruct {
     pub animada: bool,
     pub x: f32,
     pub y: f32,
+    pub pivot: Option<Vec2>,
 }

@@ -18,15 +18,22 @@ use modulos_comunes::{DataStruct, TcpMessage, EMPTYTCPMESSAGE};
 mod procesamiento;
 use crate::procesamiento::proc;
 
-const RUEDA_X: f32 = 0.0; 
-const RUEDA_Y: f32 = 600.0; 
-const CAMA_X: f32 = 300.0; 
-const CAMA_Y: f32 = 0.0; 
+const CANTIDAD_DE_IMAGENES: usize = 8; 
+
+const CINTA_X: f32 = 10.0; 
+const CINTA_Y: f32 = 900.0; 
+const CINTA_DESP: f32 = 1070.0; 
+const CAMA_X: f32 = 800.0; 
+const CAMA_Y: f32 = 1000.0; 
 const CAMA_DESP: f32 = 100.0; 
-const LED_X: f32 = 1200.0; 
-const LED_Y: f32 = 100.0; 
-const SELECTOR_X: f32 = 1500.0; 
-const SELECTOR_Y: f32 = 300.0; 
+const LED_X: f32 = 1000.0; 
+const LED_Y: f32 = 1100.0; 
+const SELECTOR_X: f32 = 2150.0; 
+const SELECTOR_Y: f32 = 1000.0; 
+const TACHO_X: f32 = 2150.0; 
+const TACHO_Y: f32 = 1200.0; 
+const TICK_X: f32 = 2150.0; 
+const TICK_Y: f32 = 700.0; 
 
 #[macroquad::main("Pogos")]
 async fn main() {
@@ -35,7 +42,8 @@ async fn main() {
             stream.set_nonblocking(true).expect("set_nonblocking failed");
             println!("Successfully connected to server in port 3333");
 
-            let cinta = quad_gif::GifAnimation::load("/home/mirko/UNRN/3ro/2do_cuatrimestre/Instrumentacion/Pogopins/pogopins_cerradura/cliente/images/Transportadora-2.gif".to_string()).await;
+            let cinta0 = quad_gif::GifAnimation::load("../images/Transportadora.gif".to_string()).await;
+            let cinta1 = quad_gif::GifAnimation::load("../images/Transportadora.gif".to_string()).await;
             let cama = Texture2D::from_file_with_format(
                 include_bytes!("../images/Cama.png"),
                 Some(ImageFormat::Png),
@@ -52,14 +60,32 @@ async fn main() {
                 include_bytes!("../images/Selector.png"),
                 Some(ImageFormat::Png),
             );
-            let mut params: [ParamsStruct; 4] = [
+            let tacho = Texture2D::from_file_with_format(
+                include_bytes!("../images/Tacho.png"),
+                Some(ImageFormat::Png),
+            );
+            let tick = Texture2D::from_file_with_format(
+                include_bytes!("../images/Tick.png"),
+                Some(ImageFormat::Png),
+            );
+            let mut params: [ParamsStruct; CANTIDAD_DE_IMAGENES] = [
                 ParamsStruct {
                     foto: led_encendido,
-                    gif: Some(cinta),
+                    gif: Some(cinta0),
                     rot: 0.0,
                     animada: false,
-                    x: RUEDA_X,
-                    y: RUEDA_Y,
+                    x: CINTA_X,
+                    y: CINTA_Y,
+                    pivot: None,
+                },
+                ParamsStruct {
+                    foto: led_encendido,
+                    gif: Some(cinta1),
+                    rot: 0.0,
+                    animada: false,
+                    x: CINTA_X + CINTA_DESP,
+                    y: CINTA_Y,
+                    pivot: None,
                 },
                 ParamsStruct {
                     foto: cama,
@@ -68,6 +94,7 @@ async fn main() {
                     animada: false,
                     x: CAMA_X,
                     y: CAMA_Y,
+                    pivot: None,
                 },
                 ParamsStruct {
                     foto: led_apagado,
@@ -76,6 +103,16 @@ async fn main() {
                     animada: false,
                     x: LED_X,
                     y: LED_Y,
+                    pivot: None,
+                },
+                ParamsStruct {
+                    foto: led_apagado,
+                    gif: None,
+                    rot: 0.0,
+                    animada: false,
+                    x: LED_X + CINTA_DESP,
+                    y: LED_Y,
+                    pivot: None,
                 },
                 ParamsStruct {
                     foto: selector,
@@ -84,6 +121,25 @@ async fn main() {
                     animada: false,
                     x: SELECTOR_X,
                     y: SELECTOR_Y,
+                    pivot: Some(Vec2::new(2300.0,1050.0)),
+                },
+                ParamsStruct {
+                    foto: tacho,
+                    gif: None,
+                    rot: 0.0,
+                    animada: false,
+                    x: TACHO_X,
+                    y: TACHO_Y,
+                    pivot: None,
+                },
+                ParamsStruct {
+                    foto: tick,
+                    gif: None,
+                    rot: 0.0,
+                    animada: false,
+                    x: TICK_X,
+                    y: TICK_Y,
+                    pivot: None,
                 },
             ];
 
