@@ -1,5 +1,4 @@
 use crate::params_struct::ParamsStruct;
-use crate::RUEDA_DESP;
 
 use macroquad::input::KeyCode::H;
 use macroquad::input::KeyCode::J;
@@ -8,32 +7,30 @@ use macroquad::input::KeyCode::L;
 
 use macroquad::prelude::*;
 
-pub fn hmi(params: [ParamsStruct; 4]) -> char {
+pub fn hmi(params: &mut [ParamsStruct; 4]) -> char {
     let mut ret: char = 'a';
     clear_background(WHITE);
 
-    let rueda = params[0];
 
-    let macroquad_params: DrawTextureParams = DrawTextureParams {
-        dest_size: None,
-        source: None,
-        rotation: rueda.rot,
-        flip_x: false,
-        flip_y: false,
-        pivot: None,
-    };
-    draw_texture_ex(rueda.foto, rueda.x + RUEDA_DESP, rueda.y, WHITE, macroquad_params);
 
     for sprite in params{
-        let macroquad_params: DrawTextureParams = DrawTextureParams {
-            dest_size: None,
-            source: None,
-            rotation: sprite.rot,
-            flip_x: false,
-            flip_y: false,
-            pivot: None,
-        };
-        draw_texture_ex(sprite.foto, sprite.x, sprite.y, WHITE, macroquad_params);
+        match sprite.gif {
+            Some(_) => {
+                sprite.gif.as_ref().expect("No hay gif").draw();
+                if sprite.animada { sprite.gif.as_mut().expect("No hay gif").tick(); }
+            },
+            None => {
+                let macroquad_params: DrawTextureParams = DrawTextureParams {
+                    dest_size: None,
+                    source: None,
+                    rotation: sprite.rot,
+                    flip_x: false,
+                    flip_y: false,
+                    pivot: None,
+                };
+                draw_texture_ex(sprite.foto, sprite.x, sprite.y, WHITE, macroquad_params);
+            },
+        }
     }
 
     if let Some(key) = get_last_key_pressed() {

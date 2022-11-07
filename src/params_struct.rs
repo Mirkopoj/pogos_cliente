@@ -1,9 +1,11 @@
 use macroquad::prelude::*;
+use quad_gif::GifAnimation;
 
-#[derive(Copy, Clone)]
 pub struct ParamsStruct {
     pub foto: Texture2D,
+    pub gif: Option<GifAnimation>,
     pub rot: f32,
+    pub animada: bool,
     pub x: f32,
     pub y: f32,
 }

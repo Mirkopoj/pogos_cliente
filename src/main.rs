@@ -1,11 +1,10 @@
 use macroquad::prelude::*;
+use quad_gif;
 
 use std::io::{Read, Write, ErrorKind};
 use std::net::TcpStream;
 use std::str::from_utf8;
 use std::{thread, time};
-
-use macroquad::prelude::ImageFormat;
 
 mod params_struct;
 use crate::params_struct::ParamsStruct;
@@ -21,7 +20,6 @@ use crate::procesamiento::proc;
 
 const RUEDA_X: f32 = 0.0; 
 const RUEDA_Y: f32 = 600.0; 
-const RUEDA_DESP: f32 = 1200.0; 
 const CAMA_X: f32 = 300.0; 
 const CAMA_Y: f32 = 0.0; 
 const CAMA_DESP: f32 = 100.0; 
@@ -32,15 +30,12 @@ const SELECTOR_Y: f32 = 300.0;
 
 #[macroquad::main("Pogos")]
 async fn main() {
-    match TcpStream::connect("192.168.1.2:3333") {
+    match TcpStream::connect("127.0.0.1:3333") {
         Ok(mut stream) => {
             stream.set_nonblocking(true).expect("set_nonblocking failed");
             println!("Successfully connected to server in port 3333");
 
-            let rueda = Texture2D::from_file_with_format(
-                include_bytes!("../images/Rueda.png"),
-                Some(ImageFormat::Png),
-            );
+            let cinta = quad_gif::GifAnimation::load("/home/mirko/UNRN/3ro/2do_cuatrimestre/Instrumentacion/Pogopins/pogopins_cerradura/cliente/images/Transportadora-2.gif".to_string()).await;
             let cama = Texture2D::from_file_with_format(
                 include_bytes!("../images/Cama.png"),
                 Some(ImageFormat::Png),
@@ -59,26 +54,34 @@ async fn main() {
             );
             let mut params: [ParamsStruct; 4] = [
                 ParamsStruct {
-                    foto: rueda,
+                    foto: led_encendido,
+                    gif: Some(cinta),
                     rot: 0.0,
+                    animada: false,
                     x: RUEDA_X,
                     y: RUEDA_Y,
                 },
                 ParamsStruct {
                     foto: cama,
+                    gif: None,
                     rot: 0.0,
+                    animada: false,
                     x: CAMA_X,
                     y: CAMA_Y,
                 },
                 ParamsStruct {
                     foto: led_apagado,
+                    gif: None,
                     rot: 0.0,
+                    animada: false,
                     x: LED_X,
                     y: LED_Y,
                 },
                 ParamsStruct {
                     foto: selector,
+                    gif: None,
                     rot: 0.0,
+                    animada: false,
                     x: SELECTOR_X,
                     y: SELECTOR_Y,
                 },
@@ -92,8 +95,8 @@ async fn main() {
             };
             loop {
                 let f_time = get_frame_time();
-                let params_new = proc(sensores, params, led_apagado, led_encendido, f_time);
-                let msg = match hmi(params_new) {
+                proc(sensores, &mut params, led_apagado, led_encendido);
+                let msg = match hmi(&mut params) {
                     'h' => {
                         b"h"
                     }
@@ -148,7 +151,6 @@ async fn main() {
                         }
                         ));
                 next_frame().await;
-                params = params_new;
             }
         }
         Err(e) => {
