@@ -3,7 +3,6 @@ use quad_gif;
 
 use std::io::{Read, Write, ErrorKind};
 use std::net::TcpStream;
-use std::str::from_utf8;
 use std::{thread, time};
 
 mod params_struct;
@@ -13,7 +12,7 @@ mod hmi;
 use crate::hmi::hmi;
 
 extern crate modulos_comunes;
-use modulos_comunes::{DataStruct, TcpMessage, EMPTYTCPMESSAGE};
+use modulos_comunes::{DataStruct, TcpMessage, EMPTYTCPMESSAGE, from_bytes};
 
 mod procesamiento;
 use crate::procesamiento::proc;
@@ -54,12 +53,16 @@ const TICK_DEST_Y: f32 = 196.0;
 
 #[macroquad::main("Pogos")]
 async fn main() {
-    match TcpStream::connect("192.168.1.2:3333") {
+    match TcpStream::connect("192.168.1.250:3333") {
         Ok(mut stream) => {
             stream.set_nonblocking(true).expect("set_nonblocking failed");
             println!("Successfully connected to server in port 3333");
 
-            let (cinta0,cinta1) = match screen_width() as u32 {
+            let (cinta0,cinta1) = (
+                quad_gif::GifAnimation::load("./images/TransportadoraChica.gif".to_string()).await,
+                quad_gif::GifAnimation::load("./images/TransportadoraChica.gif".to_string()).await
+            );
+            /*let (cinta0,cinta1) = match screen_width() as u32 {
                 800 => {
                     (
                         quad_gif::GifAnimation::load("./images/TransportadoraChica.gif".to_string()).await,
@@ -71,7 +74,7 @@ async fn main() {
                         quad_gif::GifAnimation::load("../images/Transportadora.gif".to_string()).await
                     )
                 },
-            };
+            };*/
 
             let cama = Texture2D::from_file_with_format(
                 include_bytes!("../images/Cama.png"),
@@ -189,10 +192,12 @@ async fn main() {
             ];
 
             let mut sensores = DataStruct {
-                cinta: false,
+                cinta1: false,
+                cinta2: false,
                 pogos: false,
                 selector: false,
-                sensor: false,
+                sensor1: false,
+                sensor2: false,
             };
             loop {
                 let f_time = get_frame_time();
@@ -220,22 +225,7 @@ async fn main() {
                 let mut data: TcpMessage = EMPTYTCPMESSAGE;
                 match stream.read(&mut data) {
                     Ok(_) => {
-                        println!("Llegó {}", from_utf8(&data).unwrap());
-                        match from_utf8(&data).unwrap() {
-                            "h" => {
-                                sensores.cinta ^= true; 
-                            }
-                            "j" => {
-                                sensores.pogos ^= true; 
-                            }
-                            "k" => {
-                                sensores.sensor ^= true;
-                            }
-                            "l" => {
-                                sensores.selector ^= true;
-                            }
-                            _ => {}
-                        }
+                        sensores = from_bytes(&data);
                     }
                     Err(e) => {
                         if e.kind() != ErrorKind::WouldBlock {

@@ -8,19 +8,19 @@ use macroquad::prelude::*;
 
 pub fn proc(sensores: DataStruct, param_ret: &mut [ParamsStruct; CANTIDAD_DE_IMAGENES], led_apagado: Texture2D, led_encendido: Texture2D) {
 
-    param_ret[0].animada = if sensores.cinta { true } else { false };
+    param_ret[0].animada = if sensores.cinta1 { true } else { false };
 
-    param_ret[1].animada = if sensores.cinta { true } else { false };
+    param_ret[1].animada = if sensores.cinta2 { true } else { false };
 
     param_ret[2].y = CAMA_Y + if sensores.pogos { CAMA_DESP } else { 0.0 };
 
-    param_ret[3].foto = if sensores.sensor {
+    param_ret[3].foto = if sensores.sensor1 {
         led_encendido
     } else {
         led_apagado
     };
 
-    param_ret[4].foto = if sensores.sensor {
+    param_ret[4].foto = if sensores.sensor2 {
         led_encendido
     } else {
         led_apagado
